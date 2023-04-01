@@ -16,6 +16,15 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   DatabaseReference ref = FirebaseDatabase.instance.ref().child('User');
   final searchController = TextEditingController();
+  String chatroomId(String user1, String user2) {
+    if (user1[0].toLowerCase().codeUnits[0] >
+        user2.toLowerCase().codeUnits[0]) {
+      return "$user1$user2";
+    } else {
+      return "$user2$user1";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +50,10 @@ class _UserListScreenState extends State<UserListScreen> {
                 child: FirebaseAnimatedList(
                   query: ref,
                   itemBuilder: (context, snapshot, animation, index) {
+                    String roomId = chatroomId(
+                        SessionController().userID.toString(),
+                        snapshot.child('uid').value.toString());
+
                     if (SessionController().userID.toString() ==
                         snapshot.child('uid').value.toString()) {
                       return Container();
@@ -66,6 +79,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                         .toString(),
                                     recieverId:
                                         snapshot.child('uid').value.toString(),
+                                    roomId: roomId,
                                   ),
                                   withNavBar: false);
                             },
@@ -124,6 +138,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                         .toString(),
                                     recieverId:
                                         snapshot.child('uid').value.toString(),
+                                    roomId: roomId,
                                   ),
                                   withNavBar: false);
                             },
