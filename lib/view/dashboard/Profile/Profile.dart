@@ -5,9 +5,9 @@ import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart
 import 'package:firebasesocialmediaapp/Widgets/RoundButton.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../View Model/profile/profileController.dart';
 import '../../../res/color.dart';
 import '../../../utils/routes/route_name.dart';
-import '../../profile/profileController.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
