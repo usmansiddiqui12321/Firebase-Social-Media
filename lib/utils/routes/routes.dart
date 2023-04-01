@@ -4,6 +4,7 @@ import 'package:firebasesocialmediaapp/view/signup/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../view/ForgotPassword/ForgotPassword.dart';
+import '../../view/dashboard/User/userlistscreen.dart';
 import '../../view/login/login_screen.dart';
 import '../../view/splash/splash_screen.dart';
 
@@ -20,8 +21,10 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const SignUp());
       case Routename.dashboard:
         return MaterialPageRoute(builder: (_) => const Dashboard());
-         case Routename.forgotScreen:
+      case Routename.forgotScreen:
         return MaterialPageRoute(builder: (_) => const ForgotPassword());
+      case Routename.userListScreen:
+        return MaterialPageRoute(builder: (_) => const UserListScreen());
 
       default:
         return MaterialPageRoute(builder: (_) {

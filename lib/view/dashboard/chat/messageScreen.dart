@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
 import 'package:flutter/material.dart';
 
 import '../../../res/color.dart';
+import '../../../utils/routes/route_name.dart';
 import '../../../utils/routes/utils.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -25,6 +25,12 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamed(context, Routename.dashboard);
+          },
+        ),
         title: Text(widget.name.toString()),
       ),
       body: SafeArea(
@@ -122,7 +128,7 @@ class _MessageScreenState extends State<MessageScreen> {
         'Sender': SessionController().userID.toString(),
         'reciever': widget.recieverId,
         'type': 'text',
-        'time' : timestamp.toString()
+        'time': timestamp.toString()
       }).then((value) {
         messageController.clear();
       });
