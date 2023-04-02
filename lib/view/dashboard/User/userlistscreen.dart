@@ -60,8 +60,8 @@ class _UserListScreenState extends State<UserListScreen> {
                   query: ref,
                   itemBuilder: (context, snapshot, animation, index) {
                     String roomId = chatroomId(
-                        SessionController().userName.toString(),
-                        snapshot.child('userName').value.toString());
+                        SessionController().userID.toString(),
+                        snapshot.child('uid').value.toString());
 
                     if (SessionController().userID.toString() ==
                         snapshot.child('uid').value.toString()) {

@@ -20,12 +20,13 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  DatabaseReference ref = FirebaseDatabase.instance.ref().child('Chatroom');
-
   final messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    DatabaseReference ref = FirebaseDatabase.instance
+        .ref()
+        .child('Chatroom/${widget.roomId}/chats');
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +44,7 @@ class _MessageScreenState extends State<MessageScreen> {
         children: [
           Expanded(
             child: FirebaseAnimatedList(
-              query: ref.child('${widget.roomId}'),
+              query: ref,
               itemBuilder: (context, snapshot, animation, index) {
                 return message(size, snapshot.child('Sender').value.toString(),
                     snapshot.child('message').value.toString());
@@ -53,54 +54,58 @@ class _MessageScreenState extends State<MessageScreen> {
           Row(
             children: [
               Expanded(
-                child: TextFormField(
-                  controller: messageController,
-                  onChanged: (value) {},
-                  cursorColor: AppColors.primaryTextTextColor,
-                  onFieldSubmitted: (value) {},
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: InkWell(
-                        onTap: () {
-                          sendMessage();
-                        },
-                        child: const CircleAvatar(
-                          backgroundColor: AppColors.primaryButtonColor,
-                          child: Icon(Icons.send, color: Colors.white),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: TextFormField(
+                    controller: messageController,
+                    onChanged: (value) {},
+                    cursorColor: AppColors.primaryTextTextColor,
+                    onFieldSubmitted: (value) {},
+                    decoration: InputDecoration(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 15),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.only(right: 15.0),
+                        child: InkWell(
+                          onTap: () {
+                            sendMessage();
+                          },
+                          child: const CircleAvatar(
+                            backgroundColor: AppColors.primaryButtonColor,
+                            child: Icon(Icons.send, color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    hintText: 'Enter Message',
-                    errorStyle: const TextStyle(
-                        color: Colors.red, fontWeight: FontWeight.bold),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(
-                          color: AppColors.textFieldDefaultFocus, width: 2),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(
-                          color: AppColors.secondaryColor, width: 2),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(
-                          color: AppColors.textFieldDefaultBorderColor,
-                          width: 2),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(
-                          color: AppColors.alertColor, width: 2),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(
-                          color: AppColors.alertColor, width: 2),
+                      labelStyle: const TextStyle(color: Colors.black),
+                      hintText: 'Enter Message',
+                      errorStyle: const TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                            color: AppColors.textFieldDefaultFocus, width: 2),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                            color: AppColors.secondaryColor, width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                            color: AppColors.textFieldDefaultBorderColor,
+                            width: 2),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                            color: AppColors.alertColor, width: 2),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: const BorderSide(
+                            color: AppColors.alertColor, width: 2),
+                      ),
                     ),
                   ),
                 ),
@@ -113,12 +118,14 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   sendMessage() {
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child('Chatroom');
+
     if (messageController.text.isEmpty) {
       Utils.toastmessage('Send Message');
     } else {
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
-      ref.child(widget.roomId + '/chats').set({
+      ref.child('${widget.roomId}/chats/$timestamp').set({
         // => Error here
         'isSeen': false,
         'message': messageController.text.toString(),
