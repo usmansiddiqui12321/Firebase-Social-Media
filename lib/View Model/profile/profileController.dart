@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
+import 'package:firebasesocialmediaapp/view/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../Widgets/custom_form_field.dart';
 import '../../res/color.dart';
@@ -14,6 +17,8 @@ class ProfileController extends ChangeNotifier {
   final phoneController = TextEditingController();
   final namefocus = FocusNode();
   final phonefocus = FocusNode();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  final formkey = GlobalKey<FormState>();
 
   bool _loading = false;
   bool get loading => _loading;
@@ -33,6 +38,7 @@ class ProfileController extends ChangeNotifier {
         await picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
+      // ignore: use_build_context_synchronously
       uploadImage(context);
       notifyListeners();
     }
@@ -43,6 +49,7 @@ class ProfileController extends ChangeNotifier {
         await picker.pickImage(source: ImageSource.camera, imageQuality: 100);
     if (pickedFile != null) {
       _image = File(pickedFile.path);
+      // ignore: use_build_context_synchronously
       uploadImage(context);
 
       notifyListeners();
@@ -116,21 +123,24 @@ class ProfileController extends ChangeNotifier {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                CustomFormField(
-                    controller: nameController,
-                    keyboardType: TextInputType.name,
-                    hint: '',
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'This field cannot be empty';
-                      }
-                      if (value.length < 3) {
-                        return 'This field must be at least 3 characters long';
-                      }
-                      return null; // Return null if validation passes
-                    },
-                    onChanged: (value) {},
-                    onFieldSubmitted: (value) {})
+                Form(
+                  key: formkey,
+                  child: CustomFormField(
+                      controller: nameController,
+                      keyboardType: TextInputType.name,
+                      hint: '',
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'This field cannot be empty';
+                        }
+                        if (value.length < 3) {
+                          return 'This field must be at least 3 characters long';
+                        }
+                        return null; // Return null if validation passes
+                      },
+                      onChanged: (value) {},
+                      onFieldSubmitted: (value) {}),
+                )
               ],
             ),
           ),
@@ -146,10 +156,12 @@ class ProfileController extends ChangeNotifier {
                         .copyWith(color: AppColors.alertColor))),
             TextButton(
                 onPressed: () {
-                  ref.child(SessionController().userID.toString()).update({
-                    'userName': nameController.text.toString()
-                  }).then((value) => {nameController.clear()});
-                  Navigator.pop(context);
+                  if (formkey.currentState!.validate()) {
+                    ref.child(SessionController().userID.toString()).update({
+                      'userName': nameController.text.toString()
+                    }).then((value) => {nameController.clear()});
+                    Navigator.pop(context);
+                  }
                 },
                 child:
                     Text("Ok", style: Theme.of(context).textTheme.titleSmall!))
@@ -170,21 +182,24 @@ class ProfileController extends ChangeNotifier {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                CustomFormField(
-                    controller: phoneController,
-                    keyboardType: TextInputType.number,
-                    hint: '',
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'This field cannot be empty';
-                      }
-                      if (value.length < 10) {
-                        return 'This field must be at least 3 characters long';
-                      }
-                      return null; // Return null if validation passes
-                    },
-                    onChanged: (value) {},
-                    onFieldSubmitted: (value) {})
+                Form(
+                  key: formkey,
+                  child: CustomFormField(
+                      controller: phoneController,
+                      keyboardType: TextInputType.number,
+                      hint: '',
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'This field cannot be empty';
+                        }
+                        if (value.length < 10) {
+                          return 'This field must be at least 3 characters long';
+                        }
+                        return null; // Return null if validation passes
+                      },
+                      onChanged: (value) {},
+                      onFieldSubmitted: (value) {}),
+                )
               ],
             ),
           ),
@@ -200,11 +215,12 @@ class ProfileController extends ChangeNotifier {
                         .copyWith(color: AppColors.alertColor))),
             TextButton(
                 onPressed: () {
-                  ref
-                      .child(SessionController().userID.toString())
-                      .update({'phone' : phoneController.text.toString()}).then(
-                          (value) => {phoneController.clear()});
-                  Navigator.pop(context);
+                  if (formkey.currentState!.validate()) {
+                    ref.child(SessionController().userID.toString()).update({
+                      'phone': phoneController.text.toString()
+                    }).then((value) => {phoneController.clear()});
+                    Navigator.pop(context);
+                  }
                 },
                 child:
                     Text("Ok", style: Theme.of(context).textTheme.titleSmall!))
@@ -212,5 +228,25 @@ class ProfileController extends ChangeNotifier {
         );
       },
     );
+  }
+
+  void logout(BuildContext context) {
+    try {
+      setLoading(true);
+      auth.signOut().then((value) {
+        SessionController().userID = '';
+        setLoading(false);
+   
+        PersistentNavBarNavigator.pushNewScreen(context,
+            screen: LoginPage(), withNavBar: false);
+      }).onError((error, stackTrace) {
+        setLoading(false);
+        Utils.toastmessage(error.toString());
+      });
+    } catch (e) {
+      setLoading(false);
+
+      Utils.toastmessage(e.toString());
+    }
   }
 }

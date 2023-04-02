@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../View Model/profile/profileController.dart';
 import '../../../res/color.dart';
-import '../../../utils/routes/route_name.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -166,12 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       SizedBox(height: size.height * .1),
                       RoundButton(
+                          loading: provider.loading,
                           onpress: () {
-                            auth.signOut().then((value) => {
-                                  SessionController().userID = '',
-                                  Navigator.pushNamed(
-                                      context, Routename.loginScreen)
-                                });
+                            provider.logout(context);
                           },
                           title: 'Logout',
                           buttonColor: AppColors.primaryButtonColor)

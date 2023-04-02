@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebasesocialmediaapp/view/test.dart';
+import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -20,7 +20,12 @@ class _DashboardState extends State<Dashboard> {
   final controller = PersistentTabController(initialIndex: 0);
   List<Widget> _buildScreen() {
     return [
-      const Text("Home Page"),
+      Center(
+        child: Text(
+          SessionController().userID.toString(),
+          textScaleFactor: 3,
+        ),
+      ),
       const Text("Chat"),
       const Text("Add"),
       const UserListScreen(),

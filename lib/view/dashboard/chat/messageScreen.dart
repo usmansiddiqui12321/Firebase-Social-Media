@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
+import 'package:firebasesocialmediaapp/view/dashboard/User/userlistscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../res/color.dart';
 import '../../../utils/routes/route_name.dart';
 import '../../../utils/routes/utils.dart';
@@ -33,7 +35,9 @@ class _MessageScreenState extends State<MessageScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushNamed(context, Routename.userListScreen);
+            PersistentNavBarNavigator.pushNewScreen(context,
+                screen: const UserListScreen(), withNavBar: true);
+            // Navigator.pushNamed(context, Routename.userListScreen);
           },
         ),
         title: Text(widget.name.toString()),
