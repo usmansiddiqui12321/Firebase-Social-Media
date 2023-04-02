@@ -126,7 +126,6 @@ class _MessageScreenState extends State<MessageScreen> {
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
       ref.child('${widget.roomId}/chats/$timestamp').set({
-        // => Error here
         'isSeen': false,
         'message': messageController.text.toString(),
         'Sender': SessionController().userID.toString(),

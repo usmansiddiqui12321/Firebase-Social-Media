@@ -20,7 +20,7 @@ class _DashboardState extends State<Dashboard> {
   final controller = PersistentTabController(initialIndex: 0);
   List<Widget> _buildScreen() {
     return [
-      const Test(),
+      const Text("Home Page"),
       const Text("Chat"),
       const Text("Add"),
       const UserListScreen(),
