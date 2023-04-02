@@ -121,7 +121,7 @@ class _MessageScreenState extends State<MessageScreen> {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child('Chatroom');
 
     if (messageController.text.isEmpty) {
-      Utils.toastmessage('Send Message');
+      Utils.toastmessage('Enter Something');
     } else {
       final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
