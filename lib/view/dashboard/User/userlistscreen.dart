@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import '../../../Widgets/custom_form_field.dart';
 import '../../../res/color.dart';
+import '../../../utils/routes/route_name.dart';
 
 class UserListScreen extends StatefulWidget {
   const UserListScreen({super.key});
@@ -28,7 +29,15 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("User List")),
+        appBar: AppBar(
+          title: const Text("User List"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushNamed(context, Routename.dashboard);
+            },
+          ),
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -51,8 +60,8 @@ class _UserListScreenState extends State<UserListScreen> {
                   query: ref,
                   itemBuilder: (context, snapshot, animation, index) {
                     String roomId = chatroomId(
-                        SessionController().userID.toString(),
-                        snapshot.child('uid').value.toString());
+                        SessionController().userName.toString(),
+                        snapshot.child('userName').value.toString());
 
                     if (SessionController().userID.toString() ==
                         snapshot.child('uid').value.toString()) {
