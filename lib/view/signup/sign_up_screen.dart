@@ -24,22 +24,10 @@ class _SignUpState extends State<SignUp> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    emailController.dispose();
-    passwordFocusNode.dispose();
-    emailFocusNode.dispose();
-    passwordController.dispose();
-    usernameController.dispose();
-    usernameFocusNode.dispose();
   }
 
-  FocusNode emailFocusNode = FocusNode();
-
-  TextEditingController usernameController = TextEditingController();
-  FocusNode usernameFocusNode = FocusNode();
-  FocusNode passwordFocusNode = FocusNode();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
   FirebaseAuth auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -97,13 +85,15 @@ class _SignUpState extends State<SignUp> {
                               children: [
                                 CustomFormField(
                                   onFieldSubmitted: (value) {
-                                    Utils.fieldfoucs(context, usernameFocusNode,
-                                        emailFocusNode);
+                                    Utils.fieldfoucs(
+                                        context,
+                                        provider.usernameFocusNode,
+                                        provider.emailFocusNode);
                                   },
                                   onChanged: (value) {},
-                                  controller: usernameController,
+                                  controller: provider.usernameController,
                                   enabledBorderColor: Colors.grey,
-                                  focusNode: emailFocusNode,
+                                  focusNode: provider.emailFocusNode,
                                   keyboardType: TextInputType.emailAddress,
                                   inputAction: TextInputAction.next,
                                   label: "UserName",
@@ -119,12 +109,14 @@ class _SignUpState extends State<SignUp> {
                                 CustomFormField(
                                   onChanged: (value) {},
                                   onFieldSubmitted: (value) {
-                                    Utils.fieldfoucs(context, emailFocusNode,
-                                        passwordFocusNode);
+                                    Utils.fieldfoucs(
+                                        context,
+                                        provider.emailFocusNode,
+                                        provider.emailFocusNode);
                                   },
-                                  controller: emailController,
+                                  controller: provider.emailController,
                                   enabledBorderColor: Colors.grey,
-                                  focusNode: emailFocusNode,
+                                  focusNode: provider.emailFocusNode,
                                   keyboardType: TextInputType.emailAddress,
                                   inputAction: TextInputAction.next,
                                   label: "Email",
@@ -136,8 +128,8 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 SizedBox(height: size.height * .01),
                                 CustomFormField(
-                                  controller: passwordController,
-                                  focusNode: passwordFocusNode,
+                                  controller: provider.passwordController,
+                                  focusNode: provider.passwordFocusNode,
                                   onFieldSubmitted: (value) {},
                                   keyboardType: TextInputType.visiblePassword,
                                   inputAction: TextInputAction.done,
@@ -175,9 +167,9 @@ class _SignUpState extends State<SignUp> {
                           onpress: () {
                             if (formkey.currentState!.validate()) {
                               provider.signUp(
-                                  usernameController.text,
-                                  emailController.text,
-                                  passwordController.text,
+                                  provider.usernameController.text,
+                                  provider.emailController.text,
+                                  provider.passwordController.text,
                                   context);
                             }
                           },

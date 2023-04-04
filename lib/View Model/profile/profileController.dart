@@ -235,8 +235,9 @@ class ProfileController extends ChangeNotifier {
       setLoading(true);
       auth.signOut().then((value) {
         SessionController().userID = '';
+        SessionController().userName = '';
         setLoading(false);
-   
+
         PersistentNavBarNavigator.pushNewScreen(context,
             screen: LoginPage(), withNavBar: false);
       }).onError((error, stackTrace) {

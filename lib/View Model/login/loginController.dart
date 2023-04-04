@@ -21,7 +21,7 @@ class LoginController extends ChangeNotifier {
           .signInWithEmailAndPassword(email: email, password: password)
           .then((value) => {
                 SessionController().userID = value.user!.uid.toString(),
-                SessionController().userName = value.user!.email.toString(),
+                // SessionController().userName = value.user!.displayName.toString(),
                 setLoading(false),
                 Navigator.pushNamed(context, Routename.dashboard)
               })

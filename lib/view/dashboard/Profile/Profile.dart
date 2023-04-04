@@ -43,9 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           } else if (snapshot.hasData) {
                             Map<dynamic, dynamic> map =
                                 snapshot.data.snapshot.value;
+                            SessionController().userName = map['userName'];
                             return Column(
                               children: [
                                 SizedBox(height: size.height * .02),
+                                Text(SessionController().userName.toString()),
                                 Stack(
                                   alignment: Alignment.bottomCenter,
                                   children: [

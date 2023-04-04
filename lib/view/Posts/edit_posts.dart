@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../View Model/Posts/add_postsController.dart';
+import '../../View Model/Posts/postsController.dart';
 import '../../Widgets/RoundButton.dart';
 import '../../Widgets/custom_form_field.dart';
 

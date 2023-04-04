@@ -1,10 +1,9 @@
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../View Model/Posts/add_postsController.dart';
+import '../../View Model/Posts/postsController.dart';
 import '../../Widgets/custom_form_field.dart';
 import 'edit_posts.dart';
 
@@ -75,8 +74,8 @@ class _PostScreenState extends State<PostScreen> {
                           if (ref.searchController.value.text.isEmpty) {
                             return ListTile(
                               title: Text(title),
-                              subtitle:
-                                  Text(snapshot.child('id').value.toString()),
+                              subtitle: Text(
+                                  snapshot.child('postedBy').value.toString()),
                               trailing: PopupMenuButton(
                                 icon: const Icon(Icons.more_vert),
                                 itemBuilder: (context) {
@@ -87,16 +86,26 @@ class _PostScreenState extends State<PostScreen> {
                                         leading: const Icon(Icons.edit),
                                         title: const Text("Edit"),
                                         onTap: () {
-                                          Get.back();
-                                          Get.to(
-                                            EditPostScreen(
-                                              title: title,
-                                              id: snapshot
-                                                  .child('id')
-                                                  .value
-                                                  .toString(),
-                                            ),
-                                          );
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditPostScreen(
+                                                  title: title,
+                                                  id: snapshot
+                                                      .child('id')
+                                                      .value
+                                                      .toString(),
+                                                ),
+                                              ));
+                                          // EditPostScreen(
+                                          //   title: title,
+                                          //   id: snapshot
+                                          //       .child('id')
+                                          //       .value
+                                          //       .toString(),
+                                          // ),
                                         },
                                       ),
                                     ),
@@ -112,7 +121,8 @@ class _PostScreenState extends State<PostScreen> {
                                                   .value
                                                   .toString())
                                               .remove()
-                                              .then((value) => Get.back());
+                                              .then((value) =>
+                                                  Navigator.pop(context));
                                         },
                                       ),
                                     ),
@@ -120,10 +130,11 @@ class _PostScreenState extends State<PostScreen> {
                                 },
                               ),
                             );
-                          } else if (title.toLowerCase().contains(ref
-                              .searchController.text
+                          } else if (title // SessionController Name
                               .toLowerCase()
-                              .toString())) {
+                              .contains(ref.searchController.text
+                                  .toLowerCase()
+                                  .toString())) {
                             return ListTile(
                               title: Text(title),
                               trailing: PopupMenuButton(
@@ -136,13 +147,19 @@ class _PostScreenState extends State<PostScreen> {
                                         leading: const Icon(Icons.edit),
                                         title: const Text("Edit"),
                                         onTap: () {
-                                          Get.to(EditPostScreen(
-                                            title: title,
-                                            id: snapshot
-                                                .child('id')
-                                                .value
-                                                .toString(),
-                                          ));
+                                          Navigator.pop(context);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditPostScreen(
+                                                  title: title,
+                                                  id: snapshot
+                                                      .child('id')
+                                                      .value
+                                                      .toString(),
+                                                ),
+                                              ));
                                         },
                                       ),
                                     ),
@@ -158,7 +175,8 @@ class _PostScreenState extends State<PostScreen> {
                                                   .value
                                                   .toString())
                                               .remove()
-                                              .then((value) => Get.back());
+                                              .then((value) =>
+                                                  Navigator.pop(context));
                                         },
                                       ),
                                     ),

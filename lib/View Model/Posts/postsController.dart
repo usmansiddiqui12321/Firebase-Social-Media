@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
 import 'package:firebasesocialmediaapp/view/Posts/PostScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class PostController extends ChangeNotifier {
 
   final databaseRef = FirebaseDatabase.instance.ref(); // use the root reference
   final fetchref = FirebaseDatabase.instance.ref('Posts');
+  DatabaseReference ref = FirebaseDatabase.instance.ref('User');
 
   void addPost(BuildContext context) {
     final postID = DateTime.now()
@@ -27,7 +29,9 @@ class PostController extends ChangeNotifier {
 
     databaseRef.child('Posts/$postID').set({
       "title": postController.value.text.toString(),
-      "id": postID
+      "id": postID,
+      "postedBy": SessionController().userName.toString()
+
       // add post data
     }).then((_) {
       Utils.toastmessage("Post Added");

@@ -7,6 +7,14 @@ import '../../utils/routes/route_name.dart';
 import '../Services/sessionManager.dart';
 
 class SignUpController extends ChangeNotifier {
+  FocusNode emailFocusNode = FocusNode();
+
+  TextEditingController usernameController = TextEditingController();
+  FocusNode usernameFocusNode = FocusNode();
+  FocusNode passwordFocusNode = FocusNode();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   FirebaseAuth auth = FirebaseAuth.instance;
   DatabaseReference ref = FirebaseDatabase.instance.ref().child('User');
   bool _loading = false;
@@ -21,7 +29,10 @@ class SignUpController extends ChangeNotifier {
     setLoading(true);
     try {
       auth
-          .createUserWithEmailAndPassword(email: email, password: password)
+          .createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          )
           .then((value) => {
                 setLoading(false),
                 SessionController().userID = value.user!.uid.toString(),
@@ -37,7 +48,7 @@ class SignUpController extends ChangeNotifier {
                     })
                     .then((value) => {
                           setLoading(false),
-                          Navigator.pushNamed(context, Routename.dashboard)
+                          Navigator.pushNamed(context, Routename.dashboard),
                         })
                     .onError((error, stackTrace) => {
                           setLoading(false),
