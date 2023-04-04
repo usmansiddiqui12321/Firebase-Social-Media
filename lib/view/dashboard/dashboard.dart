@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
+import 'package:firebasesocialmediaapp/view/Posts/add_posts.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import '../../res/color.dart';
+import '../Posts/PostScreen.dart';
 import 'Profile/Profile.dart';
 import 'User/userlistscreen.dart';
 
@@ -20,14 +22,9 @@ class _DashboardState extends State<Dashboard> {
   final controller = PersistentTabController(initialIndex: 0);
   List<Widget> _buildScreen() {
     return [
-      Center(
-        child: Text(
-          SessionController().userID.toString(),
-          textScaleFactor: 3,
-        ),
-      ),
+      const PostScreen(),
       const Text("Chat"),
-      const Text("Add"),
+      const AddPostScreen(),
       const UserListScreen(),
       const ProfileScreen(),
     ];
