@@ -4,11 +4,10 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
-import 'package:firebasesocialmediaapp/View%20Model/smallProviders.dart';
 import 'package:firebasesocialmediaapp/view/dashboard/User/userlistscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:provider/provider.dart';
 import '../../../utils/routes/utils.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -25,20 +24,20 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  final messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      // This callback will be called after the widget is rendered on screen
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    Future.delayed(const Duration(seconds: 2), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent * 1000,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     });
   }
-
-  final emojiController = TextEditingController();
-
-  final messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
         .child('Chatroom/${widget.roomId}/chats');
 
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
+      backgroundColor: const Color.fromARGB(255, 234, 248, 255),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -65,20 +64,19 @@ class _MessageScreenState extends State<MessageScreen> {
         children: [
           Expanded(
             child: FirebaseAnimatedList(
-              reverse: true,
-              scrollDirection: Axis.vertical,
+              controller: _scrollController,
               query: ref,
               itemBuilder: (context, snapshot, animation, index) {
+                dynamic timeSinceEpoch = snapshot.child('time').value;
+                DateTime dateTime =
+                    DateTime.fromMillisecondsSinceEpoch(timeSinceEpoch);
+                String formattedTime = DateFormat('hh:mm a').format(dateTime);
                 if (SessionController().userID ==
                     snapshot.child('Sender').value.toString()) {
-                  return _greenMessage(
-                      size,
-                      snapshot.child('Sender').value.toString(),
+                  return _greenMessage(size, formattedTime,
                       snapshot.child('message').value.toString());
                 } else {
-                  return _blueMessage(
-                      size,
-                      snapshot.child('Sender').value.toString(),
+                  return _blueMessage(size, formattedTime,
                       snapshot.child('message').value.toString());
                 }
               },
@@ -94,22 +92,6 @@ class _MessageScreenState extends State<MessageScreen> {
               ),
             ],
           ),
-          ChangeNotifierProvider(
-              create: (_) => SmallProviders(),
-              child: Consumer<SmallProviders>(builder: (context, value, child) {
-                if (value.setemoji()) {
-                  return SizedBox(
-                    height: size.height * .35,
-                    child: EmojiPicker(
-                      textEditingController: emojiController,
-                      config: Config(
-                          columns: 7,
-                          emojiSizeMax: Platform.isIOS ? 1.30 : 1.0),
-                    ),
-                  );
-                }
-                
-              }))
         ],
       ),
     );
@@ -117,28 +99,31 @@ class _MessageScreenState extends State<MessageScreen> {
 
   sendMessage() {
     DatabaseReference ref = FirebaseDatabase.instance.ref().child('Chatroom');
-
     if (messageController.text.isEmpty) {
       Utils.toastmessage('Enter Something');
     } else {
-      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
       ref.child('${widget.roomId}/chats/$timestamp').set({
         'isSeen': false,
         'message': messageController.text.toString(),
         'Sender': SessionController().userID.toString(),
         'reciever': widget.recieverId,
         'type': 'text',
-        'time': timestamp.toString()
+        'time': timestamp
       }).then((value) {
         messageController.clear();
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }).onError((error, stackTrace) {
         Utils.toastmessage(error.toString());
       });
     }
   }
 
-  Widget _blueMessage(Size size, String senderID, String message) {
+  Widget _blueMessage(Size size, String time, String message) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -167,8 +152,8 @@ class _MessageScreenState extends State<MessageScreen> {
         //message time
         Padding(
           padding: EdgeInsets.only(right: size.width * .04),
-          child: const Text(
-            '22:22',
+          child: Text(
+            time,
             style: TextStyle(fontSize: 13, color: Colors.black54),
           ),
         ),
@@ -176,7 +161,7 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
-  Widget _greenMessage(Size size, String senderID, String message) {
+  Widget _greenMessage(Size size, String time, String message) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -185,18 +170,13 @@ class _MessageScreenState extends State<MessageScreen> {
             //for adding some space
             SizedBox(width: size.width * .04),
 
-            //double tick blue icon for message read
-            // if (widget.message.read.isNotEmpty)
-            //   const Icon(Icons.done_all_rounded, color: Colors.blue, size: 20),
 
             //for adding some space
             const SizedBox(width: 2),
 
             //sent time
-            const Text(
-              '22:22',
-              // MyDateUtil.getFormattedTime(
-              //     context: context, time: widget.message.sent),
+            Text(
+              time,
               style: TextStyle(fontSize: 13, color: Colors.black54),
             ),
           ],
@@ -239,23 +219,9 @@ class _MessageScreenState extends State<MessageScreen> {
                   borderRadius: BorderRadius.circular(15)),
               child: Row(
                 children: [
-                  //emoji button
-                  ChangeNotifierProvider(
-                      create: (_) => SmallProviders(),
-                      child: Consumer<SmallProviders>(
-                        builder: (context, value, child) {
-                          return IconButton(
-                            onPressed: () {
-                              value.setemoji();
-                            },
-                            icon: const Icon(Icons.emoji_emotions,
-                                color: Colors.blueAccent, size: 25),
-                          );
-                        },
-                      )),
-
                   Expanded(
-                      child: SingleChildScrollView(
+                      child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
                     child: TextField(
                       minLines: 1,
                       controller: messageController,
@@ -305,5 +271,3 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 }
-
-// bottom chat input field
