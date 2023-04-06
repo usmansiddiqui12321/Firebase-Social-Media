@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
-import 'package:firebasesocialmediaapp/View%20Model/profile/profileController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +16,11 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  DatabaseReference userref = FirebaseDatabase.instance.ref('User');
+  final postsref =
+      FirebaseDatabase.instance.ref('User/${SessionController().userID}/Posts');
+
+  final userref =
+      FirebaseDatabase.instance.ref('User/${SessionController().userID}');
 
   DateTime? _lastPressedAt;
   @override
@@ -70,14 +73,21 @@ class _PostScreenState extends State<PostScreen> {
                         enabledBorderColor: Colors.deepPurple,
                       ),
                     ),
+                    // Text(''),
                     Expanded(
                       child: FirebaseAnimatedList(
-                        query: ref.fetchref,
+                        query: postsref,
                         defaultChild:
                             const Center(child: CircularProgressIndicator()),
                         itemBuilder: ((context, snapshot, animation, index) {
+                          Stream<DatabaseEvent> stream = userref.onValue;
                           final title =
                               snapshot.child('title').value.toString();
+                          final postedby =
+                              snapshot.child('postedBy').value.toString();
+                          final profilepic =
+                              snapshot.child('profile').value.toString();
+
                           if (ref.searchController.value.text.isEmpty) {
                             return Card(
                                 margin: const EdgeInsets.all(10),
@@ -85,13 +95,84 @@ class _PostScreenState extends State<PostScreen> {
                                   children: [
                                     ListTile(
                                       leading: CircleAvatar(
-                                            backgroundImage: NetworkImage(''),
-
+                                        backgroundImage:
+                                            NetworkImage(profilepic),
                                       ),
-                                      title: Text(snapshot
-                                          .child('postedBy')
-                                          .value
-                                          .toString()),
+                                      title: Text(postedby),
+                                      subtitle: Text('1 hr'),
+                                      trailing: PopupMenuButton(
+                                        icon: const Icon(Icons.more_vert),
+                                        itemBuilder: (context) {
+                                          return [
+                                            PopupMenuItem(
+                                              value: 1,
+                                              child: ListTile(
+                                                leading: const Icon(Icons.edit),
+                                                title: const Text("Edit"),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditPostScreen(
+                                                          title: title,
+                                                          id: snapshot
+                                                              .child('id')
+                                                              .value
+                                                              .toString(),
+                                                        ),
+                                                      ));
+                                                },
+                                              ),
+                                            ),
+                                            PopupMenuItem(
+                                              value: 2,
+                                              child: ListTile(
+                                                leading:
+                                                    const Icon(Icons.delete),
+                                                title: const Text("Delete"),
+                                                onTap: () {
+                                                  ref.fetchref
+                                                      .child(snapshot
+                                                          .child('id')
+                                                          .value
+                                                          .toString())
+                                                      .remove()
+                                                      .then((value) =>
+                                                          Navigator.pop(
+                                                              context));
+                                                },
+                                              ),
+                                            ),
+                                          ];
+                                        },
+                                      ),
+                                    ),
+                                    // SizedBox(height: 5),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: size.width * .172),
+                                      child: Text(title),
+                                    ),
+                                    
+                                  ],
+                                ));
+                          } else if (postedby // SessionController Name
+                              .toLowerCase()
+                              .contains(ref.searchController.text
+                                  .toLowerCase()
+                                  .toString())) {
+                            return Card(
+                                margin: const EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage:
+                                            NetworkImage(profilepic),
+                                      ),
+                                      title: Text(postedby),
                                       subtitle: Text('1 hr'),
                                       trailing: PopupMenuButton(
                                         icon: const Icon(Icons.more_vert),
@@ -152,60 +233,6 @@ class _PostScreenState extends State<PostScreen> {
                                     ),
                                   ],
                                 ));
-                          } else if (title // SessionController Name
-                              .toLowerCase()
-                              .contains(ref.searchController.text
-                                  .toLowerCase()
-                                  .toString())) {
-                            return ListTile(
-                              title: Text(title),
-                              trailing: PopupMenuButton(
-                                icon: const Icon(Icons.more_vert),
-                                itemBuilder: (context) {
-                                  return [
-                                    PopupMenuItem(
-                                      value: 1,
-                                      child: ListTile(
-                                        leading: const Icon(Icons.edit),
-                                        title: const Text("Edit"),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditPostScreen(
-                                                  title: title,
-                                                  id: snapshot
-                                                      .child('id')
-                                                      .value
-                                                      .toString(),
-                                                ),
-                                              ));
-                                        },
-                                      ),
-                                    ),
-                                    PopupMenuItem(
-                                      value: 2,
-                                      child: ListTile(
-                                        leading: const Icon(Icons.delete),
-                                        title: const Text("Delete"),
-                                        onTap: () {
-                                          ref.fetchref
-                                              .child(snapshot
-                                                  .child('id')
-                                                  .value
-                                                  .toString())
-                                              .remove()
-                                              .then((value) =>
-                                                  Navigator.pop(context));
-                                        },
-                                      ),
-                                    ),
-                                  ];
-                                },
-                              ),
-                            );
                           } else {
                             return Container();
                           }
