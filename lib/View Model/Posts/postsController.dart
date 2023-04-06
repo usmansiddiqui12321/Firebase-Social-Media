@@ -19,7 +19,8 @@ class PostController extends ChangeNotifier {
   }
 
   final databaseRef = FirebaseDatabase.instance.ref(); // use the root reference
-  final fetchref = FirebaseDatabase.instance.ref('Posts');
+  final fetchref =
+      FirebaseDatabase.instance.ref('User/${SessionController().userID}');
   DatabaseReference ref = FirebaseDatabase.instance.ref('User');
 
   void addPost(BuildContext context) {
@@ -30,7 +31,8 @@ class PostController extends ChangeNotifier {
     databaseRef.child('Posts/$postID').set({
       "title": postController.value.text.toString(),
       "id": postID,
-      "postedBy": SessionController().userName.toString()
+      "postedBy": SessionController().userName.toString(),
+      'profile': SessionController().profile.toString()
 
       // add post data
     }).then((_) {
@@ -42,6 +44,8 @@ class PostController extends ChangeNotifier {
             builder: (context) => PostScreen(),
           ));
       setLoading(false);
+
+      SessionController().userName = ref.child("userName").once().toString();
     }).onError((error, stackTrace) {
       Utils.toastmessage(error.toString());
       setLoading(false);
