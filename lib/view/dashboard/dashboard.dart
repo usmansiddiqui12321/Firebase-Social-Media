@@ -36,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
           activeColorPrimary: AppColors.primaryIconColor,
           inactiveColorPrimary: AppColors.textFieldDefaultBorderColor),
       PersistentBottomNavBarItem(
-          icon: const Icon(Icons.add, color: AppColors.whiteColor),
+          icon: const Icon(Icons.add),
           activeColorPrimary: AppColors.primaryIconColor,
           inactiveColorPrimary: AppColors.textFieldDefaultBorderColor),
       PersistentBottomNavBarItem(
