@@ -24,25 +24,21 @@ class PostController extends ChangeNotifier {
   }
 
   final databaseRef = FirebaseDatabase.instance.ref(); // use the root reference
-  final fetchref =
-      FirebaseDatabase.instance.ref('User/${SessionController().userID}/Posts');
+  final fetchref = FirebaseDatabase.instance.ref('Posts');
   DatabaseReference ref = FirebaseDatabase.instance.ref('User');
   DatabaseReference userref =
       FirebaseDatabase.instance.ref('User/${SessionController().userID}');
 
+  final postID = DateTime.now().millisecondsSinceEpoch.toString();
   Future<void> addPost(BuildContext context) async {
-    DatabaseEvent username = await userref.once();
-    DatabaseEvent profile = await userref.once();
+    DatabaseEvent user = await userref.once();
+    // create a unique ID for post
 
-    final postID = DateTime.now()
-        .millisecondsSinceEpoch
-        .toString(); // create a unique ID for post
-
-    databaseRef.child('User/${SessionController().userID}/Posts/$postID').set({
+    databaseRef.child('Posts/$postID').set({
       "title": postController.value.text.toString(),
       "id": postID,
-      "postedBy": username.snapshot.child('userName').value.toString(),
-      'profile': username.snapshot.child('profile').value.toString(),
+      "postedBy": user.snapshot.child('userName').value.toString(),
+      'profile': user.snapshot.child('profile').value.toString(),
       'postImage': ''
 
       // add post data
@@ -60,26 +56,6 @@ class PostController extends ChangeNotifier {
     }).onError((error, stackTrace) {
       Utils.toastmessage(error.toString());
       setLoading(false);
-    });
-  }
-
-  void addComment(String postID) {
-    final commentID = DateTime.now()
-        .millisecondsSinceEpoch
-        .toString(); // create a unique ID for comment
-
-    // add comment to the post
-    databaseRef.child('Posts/$postID/comments/$commentID').set({
-      "CommentData": commentController.value.text.toString(),
-      // add comment data
-    }).then((_) {
-      Utils.toastmessage("Comment Added");
-      setLoading(false);
-      // loading.value = false;
-    }).onError((error, stackTrace) {
-      Utils.toastmessage(error.toString());
-      setLoading(false);
-      // loading.value = false;
     });
   }
 
@@ -110,7 +86,6 @@ class PostController extends ChangeNotifier {
     if (pickedFile != null) {
       _image = File(pickedFile.path);
       // ignore: use_build_context_synchronously
-      uploadImage(context);
       notifyListeners();
     }
   }
@@ -121,13 +96,12 @@ class PostController extends ChangeNotifier {
     if (pickedFile != null) {
       _image = File(pickedFile.path);
       // ignore: use_build_context_synchronously
-      uploadImage(context);
 
       notifyListeners();
     }
   }
 
-  void pickImage(context) {
+  void pickPostImage(context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -162,8 +136,7 @@ class PostController extends ChangeNotifier {
     );
   }
 
-  void uploadImage(BuildContext context) async {
-    final postID = DateTime.now().millisecondsSinceEpoch.toString();
+  void uploadPostImage(BuildContext context) async {
     setLoading(true);
     fs.Reference storageref = fs.FirebaseStorage.instance
         .ref('/Posts/PostImage$postID${SessionController().userID}');
@@ -171,11 +144,13 @@ class PostController extends ChangeNotifier {
     await Future.value(uploadTask);
     final newUrl = await storageref.getDownloadURL();
     fetchref
+        .child(postID)
         .update({'postImage': newUrl.toString()})
         .then((value) => {
-              Utils.toastmessage('Profile Updated'),
+              Utils.toastmessage('Post Added'),
               setLoading(false),
               _image = null,
+
             })
         .onError((error, stackTrace) {
           setLoading(false);

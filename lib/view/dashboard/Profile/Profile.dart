@@ -47,7 +47,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             return Column(
                               children: [
                                 SizedBox(height: size.height * .02),
-                                Text(SessionController().userName.toString()),
                                 Stack(
                                   alignment: Alignment.bottomCenter,
                                   children: [
@@ -67,49 +66,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           child: ClipRRect(
                                             borderRadius:
                                                 BorderRadius.circular(100),
-                                            child: provider.image == null
-                                                ? map['profile'].toString() ==
-                                                        ''
-                                                    ? const Icon(Icons.person,
-                                                        size: 50)
-                                                    : Image(
-                                                        image: NetworkImage(
-                                                            map['profile']
-                                                                .toString()),
-                                                        fit: BoxFit.cover,
-                                                        loadingBuilder: (context,
-                                                            child,
-                                                            loadingProgress) {
-                                                          if (loadingProgress ==
-                                                              null) {
-                                                            return child;
-                                                          }
-                                                          return const Center(
-                                                              child:
-                                                                  CircularProgressIndicator());
-                                                        },
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return const Icon(
-                                                            Icons.error_outline,
-                                                            color: AppColors
-                                                                .alertColor,
-                                                          );
-                                                        },
-                                                      )
-                                                : Stack(
-                                                    children: [
-                                                      Image.file(
-                                                        File(provider
-                                                                .image!.path)
-                                                            .absolute,
-                                                      ),
-                                                      const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      )
-                                                    ],
-                                                  ),
+                                            child: (() {
+                                              if (provider.image == null) {
+                                                if (map['profile'].toString() ==
+                                                    '') {
+                                                  return const Icon(
+                                                      Icons.person,
+                                                      size: 50);
+                                                } else {
+                                                  return Image(
+                                                    image: NetworkImage(
+                                                        map['profile']
+                                                            .toString()),
+                                                    fit: BoxFit.cover,
+                                                    loadingBuilder: (context,
+                                                        child,
+                                                        loadingProgress) {
+                                                      if (loadingProgress ==
+                                                          null) {
+                                                        return child;
+                                                      }
+                                                      return const Center(
+                                                          child:
+                                                              CircularProgressIndicator());
+                                                    },
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return const Icon(
+                                                        Icons.error_outline,
+                                                        color: AppColors
+                                                            .alertColor,
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              } else {
+                                                return Stack(
+                                                  children: [
+                                                    Image.file(
+                                                      File(provider.image!.path)
+                                                          .absolute,
+                                                    ),
+                                                    const Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    )
+                                                  ],
+                                                );
+                                              }
+                                            })(),
                                           ),
                                         ),
                                       ),

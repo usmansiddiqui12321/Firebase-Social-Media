@@ -23,7 +23,6 @@ class _DashboardState extends State<Dashboard> {
   List<Widget> _buildScreen() {
     return [
       const PostScreen(),
-      const Text("Chat"),
       const AddPostScreen(),
       const UserListScreen(),
       const ProfileScreen(),
@@ -34,10 +33,6 @@ class _DashboardState extends State<Dashboard> {
     return [
       PersistentBottomNavBarItem(
           icon: const Icon(Icons.home),
-          activeColorPrimary: AppColors.primaryIconColor,
-          inactiveColorPrimary: AppColors.textFieldDefaultBorderColor),
-      PersistentBottomNavBarItem(
-          icon: const Icon(Icons.chat),
           activeColorPrimary: AppColors.primaryIconColor,
           inactiveColorPrimary: AppColors.textFieldDefaultBorderColor),
       PersistentBottomNavBarItem(
@@ -67,7 +62,7 @@ class _DashboardState extends State<Dashboard> {
         decoration: NavBarDecoration(
           borderRadius: BorderRadius.circular(8),
         ),
-        navBarStyle: NavBarStyle.style15,
+        navBarStyle: NavBarStyle.style1,
       ),
     );
   }

@@ -47,7 +47,6 @@ dependencies:
   cloud_firestore: 
   fluttertoast:
   image_picker:
-  emoji_picker_flutter:
   intl: ^0.18.0
 
 dev_dependencies:

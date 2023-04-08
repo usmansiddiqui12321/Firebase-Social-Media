@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
@@ -7,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../View Model/Posts/postsController.dart';
 import '../../Widgets/custom_form_field.dart';
+import '../../res/color.dart';
 import 'edit_posts.dart';
 
 class PostScreen extends StatefulWidget {
@@ -16,8 +19,7 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  final postsref =
-      FirebaseDatabase.instance.ref('User/${SessionController().userID}/Posts');
+  final postsref = FirebaseDatabase.instance.ref('Posts');
 
   final userref =
       FirebaseDatabase.instance.ref('User/${SessionController().userID}');
@@ -88,6 +90,8 @@ class _PostScreenState extends State<PostScreen> {
                           final profilepic =
                               snapshot.child('profile').value.toString();
 
+                          final postpic =
+                              snapshot.child('postImage').value.toString();
                           if (ref.searchController.value.text.isEmpty) {
                             return Card(
                                 margin: const EdgeInsets.all(10),
@@ -99,7 +103,7 @@ class _PostScreenState extends State<PostScreen> {
                                             NetworkImage(profilepic),
                                       ),
                                       title: Text(postedby),
-                                      subtitle: Text('1 hr'),
+                                      subtitle: const Text('1 hr'),
                                       trailing: PopupMenuButton(
                                         icon: const Icon(Icons.more_vert),
                                         itemBuilder: (context) {
@@ -153,9 +157,54 @@ class _PostScreenState extends State<PostScreen> {
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: size.width * .172),
-                                      child: Text(title),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(title)),
                                     ),
-                                    
+                                    const SizedBox(height: 5),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: (() {
+                                        if (ref.image == null) {
+                                          if (postpic == '') {
+                                            return Container();
+                                          } else {
+                                            return Image(
+                                              image: NetworkImage(postpic),
+                                              fit: BoxFit.cover,
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                }
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              },
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return const Icon(
+                                                  Icons.error_outline,
+                                                  color: AppColors.alertColor,
+                                                );
+                                              },
+                                            );
+                                          }
+                                        } else {
+                                          return Stack(
+                                            children: [
+                                              Image.file(
+                                                File(ref.image!.path).absolute,
+                                              ),
+                                              const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              )
+                                            ],
+                                          );
+                                        }
+                                      })(),
+                                    ),
                                   ],
                                 ));
                           } else if (postedby // SessionController Name
@@ -173,7 +222,7 @@ class _PostScreenState extends State<PostScreen> {
                                             NetworkImage(profilepic),
                                       ),
                                       title: Text(postedby),
-                                      subtitle: Text('1 hr'),
+                                      subtitle: const Text('1 hr'),
                                       trailing: PopupMenuButton(
                                         icon: const Icon(Icons.more_vert),
                                         itemBuilder: (context) {
@@ -227,9 +276,53 @@ class _PostScreenState extends State<PostScreen> {
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: size.width * .172),
-                                      child: Row(
-                                        children: [Text(title)],
-                                      ),
+                                      child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(title)),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: (() {
+                                        if (ref.image == null) {
+                                          if (postpic == '') {
+                                            return Container();
+                                          } else {
+                                            return Image(
+                                              image: NetworkImage(postpic),
+                                              fit: BoxFit.cover,
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                }
+                                                return const Center(
+                                                    child:
+                                                        CircularProgressIndicator());
+                                              },
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return const Icon(
+                                                  Icons.error_outline,
+                                                  color: AppColors.alertColor,
+                                                );
+                                              },
+                                            );
+                                          }
+                                        } else {
+                                          return Stack(
+                                            children: [
+                                              Image.file(
+                                                File(ref.image!.path).absolute,
+                                              ),
+                                              const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              )
+                                            ],
+                                          );
+                                        }
+                                      })(),
                                     ),
                                   ],
                                 ));
