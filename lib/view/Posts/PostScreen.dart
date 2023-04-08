@@ -233,16 +233,28 @@ class _PostScreenState extends State<PostScreen> {
                                   .toLowerCase()
                                   .toString())) {
                             return Card(
-                                margin: const EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    ListTile(
+                              margin: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 4.0),
+                                    child: ListTile(
                                       leading: CircleAvatar(
                                         backgroundImage:
                                             NetworkImage(profilepic),
                                       ),
-                                      title: Text(postedby),
-                                      subtitle: const Text('1 hr'),
+                                      title: Text(
+                                        postedby,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: const Text(
+                                        '1 hr',
+                                        style: TextStyle(fontSize: 12.0),
+                                      ),
                                       trailing: PopupMenuButton(
                                         icon: const Icon(Icons.more_vert),
                                         itemBuilder: (context) {
@@ -255,17 +267,18 @@ class _PostScreenState extends State<PostScreen> {
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                   Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditPostScreen(
-                                                          title: title,
-                                                          id: snapshot
-                                                              .child('id')
-                                                              .value
-                                                              .toString(),
-                                                        ),
-                                                      ));
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditPostScreen(
+                                                        title: title,
+                                                        id: snapshot
+                                                            .child('id')
+                                                            .value
+                                                            .toString(),
+                                                      ),
+                                                    ),
+                                                  );
                                                 },
                                               ),
                                             ),
@@ -277,10 +290,12 @@ class _PostScreenState extends State<PostScreen> {
                                                 title: const Text("Delete"),
                                                 onTap: () {
                                                   ref.fetchref
-                                                      .child(snapshot
-                                                          .child('id')
-                                                          .value
-                                                          .toString())
+                                                      .child(
+                                                        snapshot
+                                                            .child('id')
+                                                            .value
+                                                            .toString(),
+                                                      )
                                                       .remove()
                                                       .then((value) =>
                                                           Navigator.pop(
@@ -292,60 +307,65 @@ class _PostScreenState extends State<PostScreen> {
                                         },
                                       ),
                                     ),
-                                    // SizedBox(height: 5),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * .172),
-                                      child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(title)),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0, vertical: 8.0),
+                                    child: Text(
+                                      title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0,
+                                      ),
                                     ),
-                                    const SizedBox(height: 5),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: (() {
-                                        if (ref.image == null) {
-                                          if (postpic == '') {
-                                            return Container();
-                                          } else {
-                                            return Image(
-                                              image: NetworkImage(postpic),
-                                              fit: BoxFit.cover,
-                                              loadingBuilder: (context, child,
-                                                  loadingProgress) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                }
-                                                return const Center(
-                                                    child:
-                                                        CircularProgressIndicator());
-                                              },
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return const Icon(
-                                                  Icons.error_outline,
-                                                  color: AppColors.alertColor,
-                                                );
-                                              },
-                                            );
-                                          }
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: (() {
+                                      if (ref.image == null) {
+                                        if (postpic == '') {
+                                          return Container();
                                         } else {
-                                          return Stack(
-                                            children: [
-                                              Image.file(
-                                                File(ref.image!.path).absolute,
-                                              ),
-                                              const Center(
+                                          return Image(
+                                            image: NetworkImage(postpic),
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return const Center(
                                                 child:
                                                     CircularProgressIndicator(),
-                                              )
-                                            ],
+                                              );
+                                            },
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return const Icon(
+                                                Icons.error_outline,
+                                                color: AppColors.alertColor,
+                                              );
+                                            },
                                           );
                                         }
-                                      })(),
-                                    ),
-                                  ],
-                                ));
+                                      } else {
+                                        return Stack(
+                                          children: [
+                                            Image.file(
+                                              File(ref.image!.path).absolute,
+                                            ),
+                                            const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          ],
+                                        );
+                                      }
+                                    })(),
+                                  ),
+                                ],
+                              ),
+                            );
                           } else {
                             return Container();
                           }
