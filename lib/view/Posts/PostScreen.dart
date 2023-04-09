@@ -127,81 +127,92 @@ class _PostScreenState extends State<PostScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 4.0),
-                                    child: ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundImage:
-                                            NetworkImage(profilepic),
-                                      ),
-                                      title: Text(
-                                        postedby,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 4.0),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundImage:
+                                              NetworkImage(profilepic),
                                         ),
-                                      ),
-                                      subtitle: Text(
-                                        '1 hr',
-                                        style: TextStyle(
-                                            fontSize: 12.0,
-                                            color: isDarkMode
-                                                ? Colors.white
-                                                : Colors.black),
-                                      ),
-                                 
-                                      trailing: PopupMenuButton(
-                                        icon: const Icon(Icons.more_vert),
-                                        itemBuilder: (context) {
-                                          return [
-                                            PopupMenuItem(
-                                              value: 1,
-                                              child: ListTile(
-                                                leading: const Icon(Icons.edit),
-                                                title: const Text("Edit"),
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditPostScreen(
-                                                        title: title,
-                                                        id: snapshot
-                                                            .child('id')
-                                                            .value
-                                                            .toString(),
+                                        title: Text(
+                                          postedby,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          '1 hr',
+                                          style: TextStyle(
+                                              fontSize: 12.0,
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black),
+                                        ),
+                                        trailing: snapshot
+                                                    .child('userID')
+                                                    .value
+                                                    .toString() ==
+                                                SessionController()
+                                                    .userID
+                                                    .toString()
+                                            ? PopupMenuButton(
+                                                icon:
+                                                    const Icon(Icons.more_vert),
+                                                itemBuilder: (context) {
+                                                  return [
+                                                    PopupMenuItem(
+                                                      value: 1,
+                                                      child: ListTile(
+                                                        leading: const Icon(
+                                                            Icons.edit),
+                                                        title:
+                                                            const Text("Edit"),
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  EditPostScreen(
+                                                                title: title,
+                                                                id: snapshot
+                                                                    .child('id')
+                                                                    .value
+                                                                    .toString(),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
                                                     ),
-                                                  );
+                                                    PopupMenuItem(
+                                                      value: 2,
+                                                      child: ListTile(
+                                                        leading: const Icon(
+                                                            Icons.delete),
+                                                        title: const Text(
+                                                            "Delete"),
+                                                        onTap: () {
+                                                          ref.fetchref
+                                                              .child(
+                                                                snapshot
+                                                                    .child('id')
+                                                                    .value
+                                                                    .toString(),
+                                                              )
+                                                              .remove()
+                                                              .then((value) =>
+                                                                  Navigator.pop(
+                                                                      context));
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ];
                                                 },
-                                              ),
-                                            ),
-                                            PopupMenuItem(
-                                              value: 2,
-                                              child: ListTile(
-                                                leading:
-                                                    const Icon(Icons.delete),
-                                                title: const Text("Delete"),
-                                                onTap: () {
-                                                  ref.fetchref
-                                                      .child(
-                                                        snapshot
-                                                            .child('id')
-                                                            .value
-                                                            .toString(),
-                                                      )
-                                                      .remove()
-                                                      .then((value) =>
-                                                          Navigator.pop(
-                                                              context));
-                                                },
-                                              ),
-                                            ),
-                                          ];
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                                              )
+                                            : null,
+                                      )),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0, vertical: 8.0),
