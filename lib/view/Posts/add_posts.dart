@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../View Model/Posts/postsController.dart';
-import '../../Widgets/RoundButton.dart';
-import '../../Widgets/custom_form_field.dart';
+import '../../res/color.dart';
+import '../../utils/routes/route_name.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -14,44 +14,21 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-            color: Colors.grey[700],
-          ),
           title: Text(
             'Create Post',
             style: TextStyle(
-              color: Colors.grey[700],
+              color: isDarkMode ? Colors.white : Colors.grey[700],
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
           ),
           centerTitle: true,
-          actions: [
-            RoundButton(
-              onpress: () {
-                Provider.of<PostController>(context, listen: false)
-                    .addPost(context)
-                    .then((value) =>
-                        Provider.of<PostController>(context, listen: false)
-                            .uploadPostImage(context));
-              },
-              title: "Post",
-              buttonColor: Colors.transparent,
-              textColor: Colors.white,
-              width: 60,
-              height: 35,
-              // size: 16,
-              // radius: 20,
-              // padding: EdgeInsets.symmetric(horizontal: 8),
-            ),
-            const SizedBox(width: 10),
-          ],
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),
@@ -62,33 +39,60 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 25),
-                    CustomFormField(
-                      maxlines: 4,
+                    TextFormField(
+                      minLines: 4,
+                      maxLines: 7,
                       controller: provider.postController,
-                      onChanged: (value) {},
-                      hint: "What is in your mind?",
-                      keyboardType: TextInputType.text,
-                      validator: (value) {},
-                      enabledBorderColor: Colors.deepPurple,
-                      onFieldSubmitted: (String value) {},
+                      keyboardType: TextInputType.multiline,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                              color: AppColors.textFieldDefaultFocus, width: 2),
+                        ),
+                        hintText: 'What is in your mind?',
+                        hintStyle: TextStyle(
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: const BorderSide(
+                            color: AppColors.textFieldDefaultBorderColor,
+                            width: 2,
+                          ),
+                        ),
+                        suffixIcon: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                provider.pickPostImage(context);
+                              },
+                              icon: Icon(Icons.image,
+                                  color:
+                                      isDarkMode ? Colors.white : Colors.black),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                provider
+                                    .addPost(context)
+                                    .then((value) =>
+                                        provider.uploadPostImage(context))
+                                    .then((value) {
+                                  Navigator.pushNamed(
+                                      context, Routename.dashboard);
+                                });
+                              },
+                              icon: Icon(Icons.send,
+                                  color:
+                                      isDarkMode ? Colors.white : Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 25),
-                    RoundButton(
-                      onpress: () {
-                        provider
-                            .addPost(context)
-                            .then((value) => provider.uploadPostImage(context));
-                      },
-                      title: "Post",
-                      buttonColor: Colors.deepPurple,
-                      textColor: Colors.white,
-                    ),
-                    const SizedBox(height: 20),
-                    RoundButton(
-                        onpress: () {
-                          provider.pickPostImage(context);
-                        },
-                        title: "PickImage"),
                   ],
                 ),
               );

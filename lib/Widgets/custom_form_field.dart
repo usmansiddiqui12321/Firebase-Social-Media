@@ -23,7 +23,8 @@ class CustomFormField extends StatelessWidget {
     this.helperText = "",
     this.prefixIcon,
     required this.onChanged,
-    this.initialvalue, required this.onFieldSubmitted,
+    this.initialvalue,
+    required this.onFieldSubmitted,
   });
   final TextEditingController controller;
   final String? helperText;
@@ -50,6 +51,7 @@ class CustomFormField extends StatelessWidget {
       maxLines: maxlines,
       initialValue: initialvalue,
       keyboardType: keyboardType,
+      
       obscureText: isObscure,
       textCapitalization:
           isCaptalized ? TextCapitalization.words : TextCapitalization.none,
@@ -57,12 +59,13 @@ class CustomFormField extends StatelessWidget {
       onChanged: (value) => onChanged(value),
       cursorColor: Colors.white,
       validator: (value) => validator(value!),
-     onFieldSubmitted: (value) => onFieldSubmitted(value),
+      onFieldSubmitted: (value) => onFieldSubmitted(value),
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         // helperText: helperText,
         // prefixIcon: Icon(prefixIcon),
         labelText: islabelEnabled ? label : null,
+        
         labelStyle: const TextStyle(color: Colors.black),
         hintText: hint,
         hintStyle: TextStyle(color: hintColor),

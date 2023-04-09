@@ -22,6 +22,7 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  
   final messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   @override
@@ -39,6 +40,9 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
     DatabaseReference ref = FirebaseDatabase.instance
         .ref()

@@ -12,7 +12,6 @@ import '../../utils/routes/utils.dart';
 
 class PostController extends ChangeNotifier {
   final postController = TextEditingController();
-  final commentController = TextEditingController();
   final searchController = TextEditingController();
   TextEditingController editPostController = TextEditingController();
 
@@ -39,7 +38,8 @@ class PostController extends ChangeNotifier {
       "id": postID,
       "postedBy": user.snapshot.child('userName').value.toString(),
       'profile': user.snapshot.child('profile').value.toString(),
-      'postImage': ''
+      'postImage': '',
+      'userID' : SessionController().userID
 
       // add post data
     }).then((_) {
@@ -53,6 +53,26 @@ class PostController extends ChangeNotifier {
       setLoading(false);
 
       SessionController().userName = ref.child("userName").once().toString();
+    }).onError((error, stackTrace) {
+      Utils.toastmessage(error.toString());
+      setLoading(false);
+    });
+  }
+
+ Future<void> addComment(String postId, String commentText) async {
+    DatabaseEvent user = await userref.once();
+    final commentId = DateTime.now().millisecondsSinceEpoch.toString();
+    
+    databaseRef.child('Posts/$postId/comments/$commentId').set({
+      "comment": commentText,
+      "commentId": commentId,
+      "commentedBy": user.snapshot.child('userName').value.toString(),
+      'profile': user.snapshot.child('profile').value.toString(),
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    }).then((_) {
+      Utils.toastmessage("Comment added");
+      // commentController.text = "";
+      setLoading(false);
     }).onError((error, stackTrace) {
       Utils.toastmessage(error.toString());
       setLoading(false);
@@ -75,7 +95,6 @@ class PostController extends ChangeNotifier {
   }
 
   final picker = ImagePicker();
-  // DatabaseReference ref = FirebaseDatabase.instance.ref('User');
   fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
   File? _image;
   File? get image => _image;
@@ -150,7 +169,6 @@ class PostController extends ChangeNotifier {
               Utils.toastmessage('Post Added'),
               setLoading(false),
               _image = null,
-
             })
         .onError((error, stackTrace) {
           setLoading(false);

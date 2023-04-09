@@ -15,6 +15,7 @@ class RoundButton extends StatelessWidget {
   final String title;
   final double height, width;
   final bool loading;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -35,7 +36,7 @@ class RoundButton extends StatelessWidget {
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!
-                      .copyWith(color: Colors.white)),
+                      .copyWith(color: textColor)),
         ),
       ),
     );

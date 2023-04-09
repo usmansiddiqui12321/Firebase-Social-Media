@@ -28,6 +28,8 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
     return Scaffold(
         appBar: AppBar(
           title: const Text("User List"),
@@ -116,9 +118,17 @@ class _UserListScreenState extends State<UserListScreen> {
                                                 .toString())),
                                       )),
                             title: Text(
-                                snapshot.child('userName').value.toString()),
-                            subtitle:
-                                Text(snapshot.child('email').value.toString()),
+                              snapshot.child('userName').value.toString(),
+                              style: TextStyle(
+                                  color:
+                                      isDarkMode ? Colors.white : Colors.black),
+                            ),
+                            subtitle: Text(
+                              snapshot.child('email').value.toString(),
+                              style: TextStyle(
+                                  color:
+                                      isDarkMode ? Colors.white : Colors.black),
+                            ),
                           ),
                         );
                       } else if (snapshot

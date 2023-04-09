@@ -3,13 +3,16 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
+import 'package:firebasesocialmediaapp/view/Posts/add_posts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../View Model/Posts/postsController.dart';
 import '../../Widgets/custom_form_field.dart';
 import '../../res/color.dart';
+import 'comments.dart';
 import 'edit_posts.dart';
 
 class PostScreen extends StatefulWidget {
@@ -19,17 +22,41 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  final postsref = FirebaseDatabase.instance.ref('Posts');
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Scroll to the top of the list after the list has been built
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
+  }
 
+  final postsref = FirebaseDatabase.instance.ref('Posts').orderByChild('id');
+  final ScrollController _scrollController = ScrollController();
   final userref =
       FirebaseDatabase.instance.ref('User/${SessionController().userID}');
 
   DateTime? _lastPressedAt;
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: isDarkMode ? Colors.white : Colors.black,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddPostScreen()),
+          );
+        },
+        child: Icon(
+          Icons.add,
+          color: isDarkMode ? Colors.black : Colors.white,
+        ),
+      ),
       appBar: AppBar(
         title: const Text("Posts Screen"),
         automaticallyImplyLeading: false,
@@ -78,11 +105,12 @@ class _PostScreenState extends State<PostScreen> {
                     // Text(''),
                     Expanded(
                       child: FirebaseAnimatedList(
+                        reverse: true,
                         query: postsref,
+                        controller: _scrollController,
                         defaultChild:
                             const Center(child: CircularProgressIndicator()),
                         itemBuilder: ((context, snapshot, animation, index) {
-                          Stream<DatabaseEvent> stream = userref.onValue;
                           final title =
                               snapshot.child('title').value.toString();
                           final postedby =
@@ -112,10 +140,15 @@ class _PostScreenState extends State<PostScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      subtitle: const Text(
+                                      subtitle: Text(
                                         '1 hr',
-                                        style: TextStyle(fontSize: 12.0),
+                                        style: TextStyle(
+                                            fontSize: 12.0,
+                                            color: isDarkMode
+                                                ? Colors.white
+                                                : Colors.black),
                                       ),
+                                 
                                       trailing: PopupMenuButton(
                                         icon: const Icon(Icons.more_vert),
                                         itemBuilder: (context) {
@@ -174,10 +207,12 @@ class _PostScreenState extends State<PostScreen> {
                                         horizontal: 16.0, vertical: 8.0),
                                     child: Text(
                                       title,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0,
-                                      ),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0,
+                                          color: isDarkMode
+                                              ? Colors.white
+                                              : Colors.black),
                                     ),
                                   ),
                                   ClipRRect(
@@ -224,6 +259,49 @@ class _PostScreenState extends State<PostScreen> {
                                       }
                                     })(),
                                   ),
+                                  //Like and Comment
+                                  SizedBox(
+                                    height: 50,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          children: const [
+                                            SizedBox(width: 5),
+                                            Icon(
+                                              Icons.favorite,
+                                              color: Colors.red,
+                                            )
+                                          ],
+                                        ),
+                                        const Divider(
+                                          thickness: 2,
+                                          color: Colors.black,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            PersistentNavBarNavigator
+                                                .pushNewScreen(context,
+                                                    screen: Comments(
+                                                      postID: snapshot
+                                                          .child('id')
+                                                          .value
+                                                          .toString(),
+                                                    ),
+                                                    withNavBar: false);
+                                          },
+                                          child: Row(
+                                            children: const [
+                                              Text("Comments"),
+                                              SizedBox(width: 5),
+                                              Icon(Icons.mode_comment_outlined)
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
                             );
