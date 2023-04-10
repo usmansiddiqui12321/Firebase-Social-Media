@@ -4,9 +4,12 @@ import 'package:firebasesocialmediaapp/View%20Model/Posts/postsController.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../View Model/Services/sessionManager.dart';
+import 'edit_comment.dart';
+
 class Comments extends StatefulWidget {
-  const Comments({Key? key, required this.postID}) : super(key: key);
-  final String postID;
+  const Comments({Key? key, required this.postID, required this.userID}) : super(key: key);
+  final String postID , userID;
 
   @override
   State<Comments> createState() => _CommentsState();
@@ -72,6 +75,67 @@ class _CommentsState extends State<Comments> {
                                 ),
                                 subtitle: Text(
                                     snapshot.child('comment').value.toString()),
+                                    trailing: widget.userID ==
+                                                SessionController()
+                                                    .userID
+                                                    .toString()
+                                            ? PopupMenuButton(
+                                                icon:
+                                                    const Icon(Icons.more_vert),
+                                                itemBuilder: (context) {
+                                                  return [
+                                                    PopupMenuItem(
+                                                      value: 1,
+                                                      child: ListTile(
+                                                        leading: const Icon(
+                                                            Icons.edit),
+                                                        title:
+                                                            const Text("Edit"),
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  EditCommentScreen(
+                                                                
+                                                                comment: snapshot.child('comment').value.toString(),
+                                                                commentController: commentController,
+                                                                commentID: snapshot.child('commentId').value.toString(),
+                                                                postID: widget.postID,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                    PopupMenuItem(
+                                                      value: 2,
+                                                      child: ListTile(
+                                                        leading: const Icon(
+                                                            Icons.delete),
+                                                        title: const Text(
+                                                            "Delete"),
+                                                        onTap: () {
+                                                          commentref
+                                                              .child(
+                                                                snapshot
+                                                                    .child('commentId')
+                                                                    .value
+                                                                    .toString(),
+                                                              )
+                                                              .remove()
+                                                              .then((value) =>
+                                                                  Navigator.pop(
+                                                                      context));
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ];
+                                                },
+                                              )
+                                            : null,
                               ),
                             ),
                           );

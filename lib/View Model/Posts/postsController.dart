@@ -22,6 +22,10 @@ class PostController extends ChangeNotifier {
     notifyListeners();
   }
 
+  final picker = ImagePicker();
+  fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
+  File? _image;
+  File? get image => _image;
   final databaseRef = FirebaseDatabase.instance.ref(); // use the root reference
   final fetchref = FirebaseDatabase.instance.ref('Posts');
   DatabaseReference ref = FirebaseDatabase.instance.ref('User');
@@ -39,7 +43,7 @@ class PostController extends ChangeNotifier {
       "postedBy": user.snapshot.child('userName').value.toString(),
       'profile': user.snapshot.child('profile').value.toString(),
       'postImage': '',
-      'userID' : SessionController().userID
+      'userID': SessionController().userID
 
       // add post data
     }).then((_) {
@@ -59,10 +63,10 @@ class PostController extends ChangeNotifier {
     });
   }
 
- Future<void> addComment(String postId, String commentText) async {
+  Future<void> addComment(String postId, String commentText) async {
     DatabaseEvent user = await userref.once();
     final commentId = DateTime.now().millisecondsSinceEpoch.toString();
-    
+
     databaseRef.child('Posts/$postId/comments/$commentId').set({
       "comment": commentText,
       "commentId": commentId,
@@ -85,7 +89,7 @@ class PostController extends ChangeNotifier {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PostScreen(),
+            builder: (context) => const PostScreen(),
           ));
 
       postController.text = '';
@@ -94,10 +98,25 @@ class PostController extends ChangeNotifier {
     });
   }
 
-  final picker = ImagePicker();
-  fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
-  File? _image;
-  File? get image => _image;
+  Future<void> editComment(BuildContext context, String postID,
+      String commentid, TextEditingController commentController) async {
+    final databaseRef =
+        FirebaseDatabase.instance.ref('Posts/$postID/comments');
+    databaseRef
+        .child(commentid)
+        .update({'comment': commentController.text.toString()}).then((value) {
+      Utils.toastmessage("Comment Updated");
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PostScreen(),
+          ));
+
+      // postController.text = ''; Yad sy empty krna h
+    }).onError((error, stackTrace) {
+      Utils.toastmessage(error.toString());
+    });
+  }
 
   Future pickGalleryImage(BuildContext context) async {
     final pickedFile =

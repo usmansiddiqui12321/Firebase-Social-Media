@@ -295,6 +295,10 @@ class _PostScreenState extends State<PostScreen> {
                                             PersistentNavBarNavigator
                                                 .pushNewScreen(context,
                                                     screen: Comments(
+                                                      userID: snapshot
+                                                          .child('userID')
+                                                          .value
+                                                          .toString(),
                                                       postID: snapshot
                                                           .child('id')
                                                           .value

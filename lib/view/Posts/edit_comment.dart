@@ -6,37 +6,44 @@ import '../../Widgets/RoundButton.dart';
 import '../../Widgets/custom_form_field.dart';
 import 'PostScreen.dart';
 
-class EditPostScreen extends StatefulWidget {
-  const EditPostScreen({super.key, required this.title, required this.id});
-
-  final String title, id;
-
+class EditCommentScreen extends StatefulWidget {
+  const EditCommentScreen(
+      {super.key,
+      required this.postID,
+      required this.commentID,
+      required this.commentController,
+      required this.comment});
+  final String postID, commentID, comment;
+  final TextEditingController commentController;
   @override
-  State<EditPostScreen> createState() => _EditPostScreenState();
+  State<EditCommentScreen> createState() => _EditCommentScreenState();
 }
 
-class _EditPostScreenState extends State<EditPostScreen> {
+class _EditCommentScreenState extends State<EditCommentScreen> {
+  late TextEditingController _commentController;
+
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
-    // EditPost.editPostController = TextEditingController(text: widget.title);
+    _commentController = TextEditingController(text: widget.comment);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PostScreen(),
+                  ));
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
           title: const Text("Edit Posts"),
           centerTitle: true,
-        leading: IconButton(onPressed: (){
-           Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PostScreen(),
-          ));
-        } , icon: Icon(Icons.arrow_back),),
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),
@@ -49,10 +56,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     const SizedBox(height: 25),
                     CustomFormField(
                       maxlines: 4,
-                      controller: provider.editPostController =
-                          TextEditingController(text: widget.title),
+                      controller: _commentController,
                       onChanged: (value) {},
-                      // initialvalue: widget.title,
                       hint: "What is in your mind?",
                       keyboardType: TextInputType.text,
                       validator: (value) {},
@@ -73,7 +78,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         ),
                         RoundButton(
                           onpress: () {
-                            provider.editPost(widget.id, context);
+                            provider
+                                .editComment(
+                                  context,
+                                  widget.postID,
+                                  widget.commentID,
+                                  _commentController,
+                                )
+                                .then((value) => _commentController.text = '');
                           },
                           title: "Edit",
                           buttonColor: Colors.deepPurple,
