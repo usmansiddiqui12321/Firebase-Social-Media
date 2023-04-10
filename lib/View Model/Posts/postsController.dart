@@ -22,6 +22,9 @@ class PostController extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isLike = false;
+  bool get isLike => _isLike;
+
   final picker = ImagePicker();
   fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
   File? _image;
@@ -33,27 +36,39 @@ class PostController extends ChangeNotifier {
       FirebaseDatabase.instance.ref('User/${SessionController().userID}');
 
   final postID = DateTime.now().millisecondsSinceEpoch.toString();
+
+  //Add Post
+
+  setLike(String postId) async {
+    fetchref.child(postId).update({'likes': isLike ? 'like' : 'unlike'});
+    _isLike = !_isLike;
+    notifyListeners();
+  }
+
   Future<void> addPost(BuildContext context) async {
     DatabaseEvent user = await userref.once();
-    // create a unique ID for post
 
-    databaseRef.child('Posts/$postID').set({
+    // create a unique ID for post
+    final postId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    // add post data
+    databaseRef.child('Posts/$postId').set({
       "title": postController.value.text.toString(),
-      "id": postID,
+      "id": postId,
       "postedBy": user.snapshot.child('userName').value.toString(),
       'profile': user.snapshot.child('profile').value.toString(),
       'postImage': '',
-      'userID': SessionController().userID
-
-      // add post data
+      'userID': SessionController().userID,
+      'likes': 'unlike', // initial likes count
     }).then((_) {
       Utils.toastmessage("Post Added");
       postController.text = "";
       Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PostScreen(),
-          ));
+        context,
+        MaterialPageRoute(
+          builder: (context) => PostScreen(),
+        ),
+      );
       setLoading(false);
 
       SessionController().userName = ref.child("userName").once().toString();
@@ -62,7 +77,7 @@ class PostController extends ChangeNotifier {
       setLoading(false);
     });
   }
-
+    // To add Comments 
   Future<void> addComment(String postId, String commentText) async {
     DatabaseEvent user = await userref.once();
     final commentId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -100,8 +115,7 @@ class PostController extends ChangeNotifier {
 
   Future<void> editComment(BuildContext context, String postID,
       String commentid, TextEditingController commentController) async {
-    final databaseRef =
-        FirebaseDatabase.instance.ref('Posts/$postID/comments');
+    final databaseRef = FirebaseDatabase.instance.ref('Posts/$postID/comments');
     databaseRef
         .child(commentid)
         .update({'comment': commentController.text.toString()}).then((value) {

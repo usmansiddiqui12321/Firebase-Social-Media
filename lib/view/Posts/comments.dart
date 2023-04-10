@@ -2,20 +2,29 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Posts/postsController.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../View Model/Services/sessionManager.dart';
+import 'PostScreen.dart';
 import 'edit_comment.dart';
 
 class Comments extends StatefulWidget {
-  const Comments({Key? key, required this.postID, required this.userID}) : super(key: key);
-  final String postID , userID;
+  const Comments({Key? key, required this.postID, required this.userID})
+      : super(key: key);
+  final String postID, userID;
 
   @override
   State<Comments> createState() => _CommentsState();
 }
 
 class _CommentsState extends State<Comments> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -36,6 +45,17 @@ class _CommentsState extends State<Comments> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Comments'),
+          leading: IconButton(
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PostScreen(),
+                  ));
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),
@@ -58,7 +78,6 @@ class _CommentsState extends State<Comments> {
                                 color: Colors.grey[300],
                               ),
                               child: ListTile(
-                              
                                 tileColor: Colors.transparent,
                                 leading: CircleAvatar(
                                   backgroundImage: NetworkImage(snapshot
@@ -71,71 +90,70 @@ class _CommentsState extends State<Comments> {
                                       .child('commentedBy')
                                       .value
                                       .toString(),
-                                  style: TextStyle(color: Colors.black),
+                                  style: const TextStyle(color: Colors.black),
                                 ),
                                 subtitle: Text(
                                     snapshot.child('comment').value.toString()),
-                                    trailing: widget.userID ==
-                                                SessionController()
-                                                    .userID
-                                                    .toString()
-                                            ? PopupMenuButton(
-                                                icon:
-                                                    const Icon(Icons.more_vert),
-                                                itemBuilder: (context) {
-                                                  return [
-                                                    PopupMenuItem(
-                                                      value: 1,
-                                                      child: ListTile(
-                                                        leading: const Icon(
-                                                            Icons.edit),
-                                                        title:
-                                                            const Text("Edit"),
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  EditCommentScreen(
-                                                                
-                                                                comment: snapshot.child('comment').value.toString(),
-                                                                commentController: commentController,
-                                                                commentID: snapshot.child('commentId').value.toString(),
-                                                                postID: widget.postID,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
+                                trailing: widget.userID ==
+                                        SessionController().userID.toString()
+                                    ? PopupMenuButton(
+                                        icon: const Icon(Icons.more_vert),
+                                        itemBuilder: (context) {
+                                          return [
+                                            PopupMenuItem(
+                                              value: 1,
+                                              child: ListTile(
+                                                leading: const Icon(Icons.edit),
+                                                title: const Text("Edit"),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditCommentScreen(
+                                                        comment: snapshot
+                                                            .child('comment')
+                                                            .value
+                                                            .toString(),
+                                                        commentController:
+                                                            commentController,
+                                                        commentID: snapshot
+                                                            .child('commentId')
+                                                            .value
+                                                            .toString(),
+                                                        postID: widget.postID,
                                                       ),
                                                     ),
-                                                    PopupMenuItem(
-                                                      value: 2,
-                                                      child: ListTile(
-                                                        leading: const Icon(
-                                                            Icons.delete),
-                                                        title: const Text(
-                                                            "Delete"),
-                                                        onTap: () {
-                                                          commentref
-                                                              .child(
-                                                                snapshot
-                                                                    .child('commentId')
-                                                                    .value
-                                                                    .toString(),
-                                                              )
-                                                              .remove()
-                                                              .then((value) =>
-                                                                  Navigator.pop(
-                                                                      context));
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ];
+                                                  );
                                                 },
-                                              )
-                                            : null,
+                                              ),
+                                            ),
+                                            PopupMenuItem(
+                                              value: 2,
+                                              child: ListTile(
+                                                leading:
+                                                    const Icon(Icons.delete),
+                                                title: const Text("Delete"),
+                                                onTap: () {
+                                                  commentref
+                                                      .child(
+                                                        snapshot
+                                                            .child('commentId')
+                                                            .value
+                                                            .toString(),
+                                                      )
+                                                      .remove()
+                                                      .then((value) =>
+                                                          Navigator.pop(
+                                                              context));
+                                                },
+                                              ),
+                                            ),
+                                          ];
+                                        },
+                                      )
+                                    : null,
                               ),
                             ),
                           );

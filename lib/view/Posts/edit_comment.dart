@@ -34,6 +34,7 @@ class _EditCommentScreenState extends State<EditCommentScreen> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
+              FocusScope.of(context).unfocus(); 
               Navigator.push(
                   context,
                   MaterialPageRoute(

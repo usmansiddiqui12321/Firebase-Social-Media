@@ -36,7 +36,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
           MaterialPageRoute(
             builder: (context) => const PostScreen(),
           ));
-        } , icon: Icon(Icons.arrow_back),),
+        } , icon: const Icon(Icons.arrow_back),),
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),

@@ -35,7 +35,7 @@ class _PostScreenState extends State<PostScreen> {
   final ScrollController _scrollController = ScrollController();
   final userref =
       FirebaseDatabase.instance.ref('User/${SessionController().userID}');
-
+  // final bool isLike = false;
   DateTime? _lastPressedAt;
   @override
   Widget build(BuildContext context) {
@@ -271,24 +271,48 @@ class _PostScreenState extends State<PostScreen> {
                                     })(),
                                   ),
                                   //Like and Comment
-                                  SizedBox(
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: isDarkMode
+                                                ? Colors.white
+                                                : Colors.black)),
                                     height: 50,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        Row(
-                                          children: const [
-                                            SizedBox(width: 5),
-                                            Icon(
-                                              Icons.favorite,
-                                              color: Colors.red,
-                                            )
-                                          ],
+                                        InkWell(
+                                          onTap: () {
+                                            ref.setLike(snapshot
+                                                .child('id')
+                                                .value
+                                                .toString());
+                                          },
+                                          child: Row(
+                                            children: [
+                                              SizedBox(width: 5),
+                                              snapshot.child('likes').value.toString() =='like'
+                                                  ? const Icon(
+                                                      Icons.favorite,
+                                                      color: Colors.red,
+                                                    )
+                                                  : const Icon(
+                                                      Icons
+                                                          .favorite_border_outlined,
+                                                      color: Colors.black)
+                                            ],
+                                          ),
                                         ),
-                                        const Divider(
-                                          thickness: 2,
-                                          color: Colors.black,
+                                        Center(
+                                          child: VerticalDivider(
+                                            thickness: .5,
+                                            // color: Colors.black,
+                                            color: isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
                                         ),
                                         InkWell(
                                           onTap: () {
