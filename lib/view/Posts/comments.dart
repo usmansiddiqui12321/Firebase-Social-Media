@@ -45,17 +45,7 @@ class _CommentsState extends State<Comments> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Comments'),
-          leading: IconButton(
-            onPressed: () {
-              FocusScope.of(context).unfocus();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PostScreen(),
-                  ));
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
+        
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),
