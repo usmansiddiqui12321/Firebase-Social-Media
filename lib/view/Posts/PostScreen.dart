@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-
 import '../../View Model/Posts/postsController.dart';
 import '../../Widgets/custom_form_field.dart';
 import '../../res/color.dart';
@@ -32,7 +31,7 @@ class _PostScreenState extends State<PostScreen> {
   }
 
   final postsref = FirebaseDatabase.instance.ref('Posts').orderByChild('id');
-  final ScrollController _scrollController = ScrollController();
+  final _scrollController = ScrollController();
   final userref =
       FirebaseDatabase.instance.ref('User/${SessionController().userID}');
   // final bool isLike = false;
@@ -58,6 +57,8 @@ class _PostScreenState extends State<PostScreen> {
         ),
       ),
       appBar: AppBar(
+        iconTheme:
+            IconThemeData(color: isDarkMode ? Colors.black : Colors.white),
         title: const Text("Posts Screen"),
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -103,7 +104,7 @@ class _PostScreenState extends State<PostScreen> {
                     ),
                   ),
                   // Text(''),
-                  Expanded(
+                  Flexible(
                     child: FirebaseAnimatedList(
                       query: postsref,
                       controller: _scrollController,

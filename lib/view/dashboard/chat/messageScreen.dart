@@ -1,4 +1,3 @@
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Services/sessionManager.dart';
@@ -6,6 +5,7 @@ import 'package:firebasesocialmediaapp/view/dashboard/User/userlistscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import '../../../utils/routes/route_name.dart';
 import '../../../utils/routes/utils.dart';
 
 class MessageScreen extends StatefulWidget {
@@ -22,7 +22,6 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  
   final messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   @override
@@ -40,7 +39,6 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     final brightness = MediaQuery.of(context).platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
@@ -52,10 +50,10 @@ class _MessageScreenState extends State<MessageScreen> {
       backgroundColor: const Color.fromARGB(255, 234, 248, 255),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back,
+              color: isDarkMode ? Colors.white : Colors.black),
           onPressed: () {
-            PersistentNavBarNavigator.pushNewScreen(context,
-                screen: const UserListScreen(), withNavBar: true);
+            Navigator.pushNamed(context, Routename.dashboard);
           },
         ),
         title: Text(widget.name.toString()),
@@ -171,7 +169,6 @@ class _MessageScreenState extends State<MessageScreen> {
           children: [
             //for adding some space
             SizedBox(width: size.width * .04),
-
 
             //for adding some space
             const SizedBox(width: 2),

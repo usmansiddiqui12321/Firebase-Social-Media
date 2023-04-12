@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -14,7 +14,7 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-FirebaseAuth auth = FirebaseAuth.instance;
+// FirebaseAuth auth = FirebaseAuth.instance;
 
 class _DashboardState extends State<Dashboard> {
   DateTime? _lastPressedAt;
@@ -73,6 +73,10 @@ class _DashboardState extends State<Dashboard> {
           screens: _buildScreen(),
           items: _navBarItems(),
           controller: controller,
+          confineInSafeArea: true,
+          handleAndroidBackButtonPress: true,
+          resizeToAvoidBottomInset: true,
+          hideNavigationBarWhenKeyboardShows: true,
           backgroundColor: AppColors.otpHintColor,
           decoration: NavBarDecoration(
             borderRadius: BorderRadius.circular(8),

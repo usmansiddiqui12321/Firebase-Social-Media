@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebasesocialmediaapp/View%20Model/Posts/postsController.dart';
+import 'package:firebasesocialmediaapp/view/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +46,20 @@ class _CommentsState extends State<Comments> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Comments'),
-        
+          leading: IconButton(
+            onPressed: () {
+              FocusScope.of(context).unfocus();
+              PersistentNavBarNavigator.pushNewScreen(
+                context,
+                screen: const Dashboard(),
+                withNavBar: true,
+              );
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),

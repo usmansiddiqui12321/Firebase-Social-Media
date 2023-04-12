@@ -26,17 +26,24 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Edit Posts"),
           centerTitle: true,
-        leading: IconButton(onPressed: (){
-           Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PostScreen(),
-          ));
-        } , icon: const Icon(Icons.arrow_back),),
+          iconTheme:
+              IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PostScreen(),
+                  ));
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
         ),
         body: ChangeNotifierProvider(
           create: (_) => PostController(),

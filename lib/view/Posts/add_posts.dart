@@ -13,6 +13,12 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final brightness = MediaQuery.of(context).platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
@@ -20,6 +26,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
         appBar: AppBar(
           backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
           elevation: 0,
+          iconTheme:
+              IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
           title: Text(
             'Create Post',
             style: TextStyle(

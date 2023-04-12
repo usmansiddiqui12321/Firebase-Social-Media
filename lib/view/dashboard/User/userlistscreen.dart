@@ -34,7 +34,8 @@ class _UserListScreenState extends State<UserListScreen> {
         appBar: AppBar(
           title: const Text("User List"),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back,
+                color: isDarkMode ? Colors.white : Colors.black),
             onPressed: () {
               Navigator.pushNamed(context, Routename.dashboard);
             },
