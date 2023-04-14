@@ -23,6 +23,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     final brightness = MediaQuery.of(context).platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: isDarkMode ? Colors.grey[700] : Colors.white,
           elevation: 0,
@@ -83,14 +84,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             ),
                             IconButton(
                               onPressed: () {
-                                provider
-                                    .addPost(context)
-                                    .then((value) =>
-                                        provider.uploadPostImage(context))
-                                    .then((value) {
-                                  Navigator.pushNamed(
-                                      context, Routename.dashboard);
-                                });
+                                provider.addPost(context);
+                                provider.uploadPostImage(context);
+                                Navigator.pushNamed(
+                                    context, Routename.dashboard);
+
+                                // provider.addPost(context),
+                                // provider
+                                //     .addPost(context),
+                                //     provider.uploadPostImage(context).then((value) {
+                                //   Navigator.pushNamed(
+                                //       context, Routename.dashboard);
+                                //     }))
                               },
                               icon: Icon(Icons.send,
                                   color:

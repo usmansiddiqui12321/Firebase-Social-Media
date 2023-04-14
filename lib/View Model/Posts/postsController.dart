@@ -49,12 +49,11 @@ class PostController extends ChangeNotifier {
     DatabaseEvent user = await userref.once();
 
     // create a unique ID for post
-    final postId = DateTime.now().millisecondsSinceEpoch.toString();
 
     // add post data
-    databaseRef.child('Posts/$postId').set({
+    databaseRef.child('Posts/$postID').set({
       "title": postController.value.text.toString(),
-      "id": postId,
+      "id": postID,
       "postedBy": user.snapshot.child('userName').value.toString(),
       'profile': user.snapshot.child('profile').value.toString(),
       'postImage': '',
@@ -77,7 +76,8 @@ class PostController extends ChangeNotifier {
       setLoading(false);
     });
   }
-    // To add Comments 
+
+  // To add Comments
   Future<void> addComment(String postId, String commentText) async {
     DatabaseEvent user = await userref.once();
     final commentId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -85,6 +85,7 @@ class PostController extends ChangeNotifier {
     databaseRef.child('Posts/$postId/comments/$commentId').set({
       "comment": commentText,
       "commentId": commentId,
+      "userCommentId": SessionController().userID.toString(),
       "commentedBy": user.snapshot.child('userName').value.toString(),
       'profile': user.snapshot.child('profile').value.toString(),
       'timestamp': DateTime.now().millisecondsSinceEpoch,

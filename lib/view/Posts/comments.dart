@@ -7,13 +7,13 @@ import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../View Model/Services/sessionManager.dart';
-import 'PostScreen.dart';
+// import 'PostScreen.dart';
 import 'edit_comment.dart';
 
 class Comments extends StatefulWidget {
-  const Comments({Key? key, required this.postID, required this.userID})
+  const Comments({Key? key, required this.postID })
       : super(key: key);
-  final String postID, userID;
+  final String postID;
 
   @override
   State<Comments> createState() => _CommentsState();
@@ -98,7 +98,7 @@ class _CommentsState extends State<Comments> {
                                 ),
                                 subtitle: Text(
                                     snapshot.child('comment').value.toString()),
-                                trailing: widget.userID ==
+                                trailing: snapshot.child('userCommentId').value.toString() ==
                                         SessionController().userID.toString()
                                     ? PopupMenuButton(
                                         icon: const Icon(Icons.more_vert),
